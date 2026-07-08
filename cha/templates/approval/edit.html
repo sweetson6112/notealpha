@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ note.document_number }}{% endblock %}
+{% block content %}
+<h4 class="mb-3">Edit Approval Note: {{ note.document_number }}</h4>
+
+<form method="POST" action="{{ url_for('approval_note.regenerate', note_id=note.id) }}" class="mb-3">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Regenerate Paragraphs &amp; Totals from Current Invoices</button>
+</form>
+
+<div class="card"><div class="card-body">
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label class="form-label">Subject</label>
+    <textarea name="subject_text" class="form-control" rows="2">{{ note.subject_text }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Paragraph 1 (auto-generated)</label>
+    <textarea name="paragraph_1" class="form-control" rows="3">{{ note.paragraph_1 }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Paragraph 2 (Recoverable Charges explanation - editable)</label>
+    <textarea name="paragraph_2" class="form-control" rows="4">{{ note.paragraph_2 }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Paragraph 3 (Optional Remarks)</label>
+    <textarea name="paragraph_3" class="form-control" rows="2">{{ note.paragraph_3 }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Paragraph 4 (Approval Request - auto-generated)</label>
+    <textarea name="paragraph_4" class="form-control" rows="3">{{ note.paragraph_4 }}</textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+  <a href="{{ url_for('approval_note.view_note', note_id=note.id) }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+</div></div>
+{% endblock %}

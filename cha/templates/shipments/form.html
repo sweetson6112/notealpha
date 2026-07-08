@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Shipment' if shipment else 'New Shipment' }}{% endblock %}
+{% block content %}
+<h4 class="mb-3">{{ 'Edit Shipment' if shipment else 'New Shipment' }}</h4>
+<div class="card"><div class="card-body">
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">File Number *</label>
+      {% if shipment %}
+        <input type="text" class="form-control" value="{{ shipment.file_number }}" disabled>
+      {% else %}
+        <input type="text" name="file_number" class="form-control" required>
+      {% endif %}
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">GRN Number</label>
+      <input type="text" name="grn_number" class="form-control" value="{{ shipment.grn_number if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Bill of Entry Number</label>
+      <input type="text" name="boe_number" class="form-control" value="{{ shipment.boe_number if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Supplier Invoice Reference</label>
+      <input type="text" name="supplier_invoice_ref" class="form-control" value="{{ shipment.supplier_invoice_ref if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Bill of Supply Number</label>
+      <input type="text" name="bill_of_supply_number" class="form-control" value="{{ shipment.bill_of_supply_number if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Supplier Name</label>
+      <input type="text" name="supplier_name" class="form-control" value="{{ shipment.supplier_name if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">CHA Name *</label>
+      <input type="text" name="cha_name" class="form-control" required value="{{ shipment.cha_name if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Shipping Line</label>
+      <input type="text" name="shipping_line" class="form-control" value="{{ shipment.shipping_line if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Container Number</label>
+      <input type="text" name="container_number" class="form-control" value="{{ shipment.container_number if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Port</label>
+      <input type="text" name="port" class="form-control" value="{{ shipment.port if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Arrival Date</label>
+      <input type="date" name="arrival_date" class="form-control" value="{{ shipment.arrival_date if shipment else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Clearance Date</label>
+      <input type="date" name="clearance_date" class="form-control" value="{{ shipment.clearance_date if shipment else '' }}">
+    </div>
+    <div class="col-md-12">
+      <label class="form-label">Remarks</label>
+      <textarea name="remarks" class="form-control" rows="2">{{ shipment.remarks if shipment else '' }}</textarea>
+    </div>
+  </div>
+  <div class="mt-4">
+    <button type="submit" class="btn btn-primary">Save Shipment</button>
+    <a href="{{ url_for('shipments.list_shipments') }}" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+  {% if not shipment %}
+  <div class="alert alert-info mt-3 mb-0">
+    Two default invoices will be created automatically: <strong>Shipping Line Invoice</strong> and <strong>CHA Service Charge</strong>.
+  </div>
+  {% endif %}
+</form>
+</div></div>
+{% endblock %}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ note.document_number }}</title>
+<style>
+  body { font-family: "Book Antiqua", Georgia, serif; font-size: 12pt; margin: 1in; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table, th, td { border: 1px solid #000; }
+  th, td { padding: 6px 8px; }
+  .header-line { display: flex; justify-content: space-between; font-weight: bold; }
+  .subject { font-weight: bold; text-decoration: underline; }
+  @media print { .no-print { display: none; } }
+</style>
+</head>
+<body>
+<div class="no-print mb-3"><button onclick="window.print()">Print</button></div>
+<div class="header-line">
+  <div>{{ note.document_number }}</div>
+  <div>{{ note.document_date.strftime('%d/%m/%Y') }}</div>
+</div>
+<br>
+<p class="subject">Sub: {{ note.subject_text }}</p>
+<p><strong>Para 1</strong>: {{ note.paragraph_1 }}</p>
+
+<table>
+  <thead>
+    <tr><th>Sl No</th><th>Consignment Charges</th><th>Invoice /Ref:</th><th>Amount</th><th>CHA Ref</th><th>SYS Ref</th></tr>
+  </thead>
+  <tbody>
+  {% for inv in invoices %}
+    <tr>
+      <td>{{ loop.index }}.</td>
+      <td>{{ inv.short_label() }}{% if inv.vendor_name %} ({{ inv.vendor_name }}){% endif %}</td>
+      <td>{{ inv.invoice_number or '' }}</td>
+      <td>{{ inv.invoice_amount | inr }}</td>
+      <td>{{ inv.cha_ref or '' }}</td>
+      <td>{{ inv.srn or '' }}</td>
+    </tr>
+  {% endfor %}
+    <tr><td></td><td></td><td><strong>Total</strong></td><td><strong>{{ note.total_amount | inr }}</strong></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+{% if note.paragraph_2 %}<p><strong>Para 2:</strong> {{ note.paragraph_2 }}</p>{% endif %}
+{% if note.paragraph_3 %}<p><strong>Para 3:</strong> {{ note.paragraph_3 }}</p>{% endif %}
+<p><strong>Para 4:</strong> {{ note.paragraph_4 }}</p>
+
+<br><br>
+<p>Sr. Superintendent Duty Free</p><br>
+<p>Sr. Superintendent SG Duty Free</p><br>
+<p>DGM (CDRSL) &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; AGM (FIN)</p><br>
+<p>CFO CDRSL</p><br>
+<p>MD, CDRSL</p>
+</body>
+</html>

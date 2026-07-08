@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Approval Register{% endblock %}
+{% block content %}
+<h4 class="mb-3">Approval Register</h4>
+<div class="card"><div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead><tr><th>Document Number</th><th>Date</th><th>Shipment</th><th>Status</th><th>Total</th></tr></thead>
+<tbody>
+{% for n in notes %}
+<tr>
+<td><a href="{{ url_for('approval_note.view_note', note_id=n.id) }}">{{ n.document_number }}</a></td>
+<td>{{ n.document_date }}</td>
+<td>{{ n.shipment.file_number }}</td>
+<td><span class="badge bg-primary">{{ n.status }}</span></td>
+<td>{{ n.total_amount | inr }}</td>
+</tr>
+{% else %}
+<tr><td colspan="5" class="text-muted text-center py-3">No approval notes yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div></div>
+{% endblock %}

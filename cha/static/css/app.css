@@ -1,0 +1,93 @@
+:root {
+  --gov-blue: #0b3d66;
+  --gov-blue-light: #1a5c94;
+  --gov-grey: #f4f6f8;
+  --gov-border: #d7dde3;
+}
+
+body {
+  background: var(--gov-grey);
+  font-family: "Segoe UI", "Book Antiqua", Georgia, serif;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background: var(--gov-blue);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 0 1rem 1rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.15);
+  margin-bottom: .5rem;
+}
+.sidebar-brand i { font-size: 1.8rem; }
+.brand-title { font-weight: 700; font-size: 1rem; }
+.brand-sub { font-size: .75rem; opacity: .8; }
+
+.sidebar-nav { flex: 1; }
+.sidebar-nav .nav-link {
+  color: #dce7f2;
+  padding: .6rem 1.2rem;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background: rgba(255,255,255,.08);
+  border-left-color: #ffc107;
+  color: #fff;
+}
+
+.sidebar-footer {
+  padding: .8rem 1.2rem;
+  border-top: 1px solid rgba(255,255,255,.15);
+  color: #fff;
+}
+
+.main-content { flex: 1; min-width: 0; }
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--gov-border);
+  padding: .6rem 1.2rem;
+}
+.content-body { padding: 1.4rem; }
+
+.card { border: 1px solid var(--gov-border); }
+.kpi-card { border-left: 4px solid var(--gov-blue); }
+.kpi-value { font-size: 1.6rem; font-weight: 700; color: var(--gov-blue); }
+
+.approval-note-paper {
+  background: #fff;
+  border: 1px solid var(--gov-border);
+  padding: 2.2rem;
+  font-family: "Book Antiqua", Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.approval-note-paper table { width: 100%; border-collapse: collapse; }
+.approval-note-paper table, .approval-note-paper th, .approval-note-paper td {
+  border: 1px solid #000;
+}
+.approval-note-paper th, .approval-note-paper td { padding: 6px 8px; }
+
+[data-bs-theme="dark"] body { background: #12181f; }
+[data-bs-theme="dark"] .topbar,
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .approval-note-paper { background: #1b232c; color: #e8edf2; }
+
+@media (max-width: 767px) {
+  .sidebar { position: fixed; left: -260px; top: 0; bottom: 0; z-index: 1050; transition: left .2s; }
+  .sidebar.show { left: 0; }
+}

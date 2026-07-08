@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Statutory Document' if document else 'Upload Statutory Document' }}{% endblock %}
+{% block content %}
+<h4 class="mb-3">{{ 'Edit Statutory Document' if document else 'Upload Statutory Document' }}</h4>
+<div class="card"><div class="card-body">
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Category *</label>
+      <select name="category" class="form-select" required>
+        {% for c in categories %}
+        <option value="{{ c }}" {% if document and document.category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-8">
+      <label class="form-label">Title *</label>
+      <input type="text" name="title" class="form-control" required
+             placeholder="e.g. Customs Bonded Warehouse License - 2025-28"
+             value="{{ document.title if document else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Document Number</label>
+      <input type="text" name="document_number" class="form-control" value="{{ document.document_number if document else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Issuing Authority</label>
+      <input type="text" name="issuing_authority" class="form-control" value="{{ document.issuing_authority if document else '' }}">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Issue Date</label>
+      <input type="date" name="issue_date" class="form-control" value="{{ document.issue_date if document else '' }}">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Expiry Date</label>
+      <input type="date" name="expiry_date" class="form-control" value="{{ document.expiry_date if document else '' }}">
+      <div class="form-text">Leave blank if this document does not expire.</div>
+    </div>
+
+    <div class="col-12"><hr></div>
+    <div class="col-md-8">
+      <label class="form-label">{{ 'Replace PDF File (optional)' if document else 'PDF File *' }}</label>
+      <input type="file" name="document_file" class="form-control" accept="application/pdf" {% if not document %}required{% endif %}>
+      <div class="form-text">Only PDF files are accepted for statutory documents.</div>
+      {% if document %}
+        <div class="mt-1 small">Current file: <a href="{{ url_for('statutory_docs.download_document', doc_id=document.id) }}">{{ document.original_filename }}</a></div>
+      {% endif %}
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Remarks</label>
+      <textarea name="remarks" class="form-control" rows="2">{{ document.remarks if document else '' }}</textarea>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-primary">Save Document</button>
+    <a href="{{ url_for('statutory_docs.list_documents') }}" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+</form>
+</div></div>
+{% endblock %}

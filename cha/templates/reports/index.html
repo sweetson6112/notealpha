@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h4 class="mb-3">Reports</h4>
+<div class="row g-3">
+  {% set reports = [
+    ('Shipment Register', 'reports.shipment_register', 'bi-box-seam'),
+    ('Invoice Register', 'reports.invoice_register', 'bi-receipt'),
+    ('Recoverable Charges', 'reports.recoverable_charges', 'bi-arrow-repeat'),
+    ('Company Charges', 'reports.company_charges', 'bi-building'),
+    ('Vendor Summary', 'reports.vendor_summary', 'bi-people'),
+    ('Pending Bills', 'reports.pending_bills', 'bi-hourglass-split'),
+    ('Paid Bills', 'reports.paid_bills', 'bi-check-circle'),
+    ('Approval Register', 'reports.approval_register', 'bi-file-earmark-check'),
+  ] %}
+  {% for title, endpoint, icon in reports %}
+  <div class="col-md-3 col-6">
+    <a href="{{ url_for(endpoint) }}" class="text-decoration-none">
+      <div class="card h-100 text-center py-4">
+        <i class="bi {{ icon }} fs-1 text-primary"></i>
+        <div class="mt-2 fw-semibold text-dark">{{ title }}</div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

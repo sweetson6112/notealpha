@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Invoice' if invoice else 'New Invoice' }}{% endblock %}
+{% block content %}
+<h4 class="mb-3">{{ 'Edit Invoice' if invoice else 'New Invoice' }} - {{ shipment.file_number }}</h4>
+<div class="card"><div class="card-body">
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Invoice Type *</label>
+      <select name="invoice_type" class="form-select" required>
+        {% for t in invoice_types %}
+        <option value="{{ t }}" {% if invoice and invoice.invoice_type == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Vendor Name</label>
+      <input type="text" name="vendor_name" class="form-control" value="{{ invoice.vendor_name if invoice else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Invoice Number</label>
+      <input type="text" name="invoice_number" class="form-control" value="{{ invoice.invoice_number if invoice else '' }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Invoice Date</label>
+      <input type="date" name="invoice_date" class="form-control" value="{{ invoice.invoice_date if invoice else '' }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Invoice Amount *</label>
+      <input type="number" step="0.01" name="invoice_amount" class="form-control" required value="{{ invoice.invoice_amount if invoice else '0' }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">GST</label>
+      <input type="number" step="0.01" name="gst" class="form-control" value="{{ invoice.gst if invoice else '0' }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if invoice and invoice.status == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Bill of Supply</label>
+      <input type="text" name="bill_of_supply" class="form-control" value="{{ invoice.bill_of_supply if invoice else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">SRN (System Ref)</label>
+      <input type="text" name="srn" class="form-control" value="{{ invoice.srn if invoice else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">CHA Ref</label>
+      <input type="text" name="cha_ref" class="form-control" value="{{ invoice.cha_ref if invoice else '' }}">
+    </div>
+
+    <div class="col-12"><hr><h6>Charge Classification</h6></div>
+    <div class="col-md-4">
+      <label class="form-label">Classification</label>
+      <select name="classification" id="classification" class="form-select">
+        <option value="">-- Select --</option>
+        <option value="Company Borne" {% if invoice and invoice.classification == 'Company Borne' %}selected{% endif %}>Company Borne</option>
+        <option value="Recoverable" {% if invoice and invoice.classification == 'Recoverable' %}selected{% endif %}>Recoverable</option>
+      </select>
+    </div>
+    <div class="col-md-4" id="companyBorneField">
+      <label class="form-label">Reason</label>
+      <select name="company_borne_reason" class="form-select">
+        <option value="">-- Select --</option>
+        {% for r in reasons %}
+        <option value="{{ r }}" {% if invoice and invoice.company_borne_reason == r %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4" id="recoverableField">
+      <label class="form-label">Recover From</label>
+      <select name="recover_from" class="form-select">
+        <option value="">-- Select --</option>
+        {% for r in recover_options %}
+        <option value="{{ r }}" {% if invoice and invoice.recover_from == r %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-6" id="recoverPartyField">
+      <label class="form-label">Recover From (Party Name, e.g. "M/s Avolta")</label>
+      <input type="text" name="recover_from_party" class="form-control" value="{{ invoice.recover_from_party if invoice else '' }}">
+    </div>
+
+    <div class="col-12"><hr><h6>Attachment</h6></div>
+    <div class="col-md-4">
+      <label class="form-label">Category</label>
+      <select name="upload_category" class="form-select">
+        <option>Invoice PDF</option>
+        <option>Bill of Supply</option>
+        <option>Management Approval</option>
+        <option>Emails</option>
+        <option>Supporting Documents</option>
+        <option>Images</option>
+        <option>Word</option>
+        <option>Excel</option>
+      </select>
+    </div>
+    <div class="col-md-8">
+      <label class="form-label">Upload File</label>
+      <input type="file" name="upload" class="form-control">
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Remarks</label>
+      <textarea name="remarks" class="form-control" rows="2">{{ invoice.remarks if invoice else '' }}</textarea>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <button type="submit" class="btn btn-primary">Save Invoice</button>
+    <a href="{{ url_for('shipments.view_shipment', shipment_id=shipment.id) }}" class="btn btn-outline-secondary">Cancel</a>
+    {% if invoice %}
+    <button type="submit" form="deleteForm" class="btn btn-outline-danger float-end" onclick="return confirm('Delete this invoice?')">Delete</button>
+    {% endif %}
+  </div>
+</form>
+{% if invoice %}
+<form id="deleteForm" method="POST" action="{{ url_for('invoices.delete_invoice', invoice_id=invoice.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endif %}
+</div></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function toggleClassificationFields() {
+  const val = document.getElementById('classification').value;
+  document.getElementById('companyBorneField').style.display = val === 'Company Borne' ? '' : 'none';
+  document.getElementById('recoverableField').style.display = val === 'Recoverable' ? '' : 'none';
+  document.getElementById('recoverPartyField').style.display = val === 'Recoverable' ? '' : 'none';
+}
+document.getElementById('classification').addEventListener('change', toggleClassificationFields);
+toggleClassificationFields();
+</script>
+{% endblock %}
