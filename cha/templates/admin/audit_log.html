@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Audit Log{% endblock %}
+{% block content %}
+<h4 class="mb-3">Admin: Audit Log</h4>
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users') }}">Users</a></li>
+  <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.financial_years') }}">Financial Years</a></li>
+  <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.charge_types') }}">Charge Types</a></li>
+  <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin.audit_log') }}">Audit Log</a></li>
+</ul>
+<div class="card"><div class="card-body p-0">
+  <table class="table table-sm mb-0">
+    <thead><tr><th>When</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th><th>IP</th></tr></thead>
+    <tbody>
+    {% for l in logs %}
+      <tr>
+        <td>{{ l.created_at.strftime('%d-%b-%Y %H:%M:%S') }}</td>
+        <td>{{ l.user.username if l.user else 'system' }}</td>
+        <td>{{ l.action }}</td>
+        <td>{{ l.entity_type }}{% if l.entity_id %} #{{ l.entity_id }}{% endif %}</td>
+        <td>{{ l.details or '-' }}</td>
+        <td>{{ l.ip_address or '-' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="text-muted text-center py-3">No audit entries yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

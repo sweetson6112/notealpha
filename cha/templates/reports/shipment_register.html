@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Shipment Register{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h4>Shipment Register</h4>
+  <a href="{{ url_for('reports.shipment_register_export') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-file-excel"></i> Export Excel</a>
+</div>
+<div class="card"><div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead><tr><th>File No</th><th>GRN</th><th>BOE</th><th>CHA</th><th>Supplier</th><th>Shipping Line</th><th>Arrival</th><th>Clearance</th><th>Total</th></tr></thead>
+<tbody>
+{% for s in shipments %}
+<tr>
+<td><a href="{{ url_for('shipments.view_shipment', shipment_id=s.id) }}">{{ s.file_number }}</a></td>
+<td>{{ s.grn_number or '-' }}</td><td>{{ s.boe_number or '-' }}</td><td>{{ s.cha_name }}</td>
+<td>{{ s.supplier_name or '-' }}</td><td>{{ s.shipping_line or '-' }}</td>
+<td>{{ s.arrival_date or '-' }}</td><td>{{ s.clearance_date or '-' }}</td><td>{{ s.total_amount() | inr }}</td>
+</tr>
+{% else %}
+<tr><td colspan="9" class="text-muted text-center py-3">No data.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div></div>
+{% endblock %}

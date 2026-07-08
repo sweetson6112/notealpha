@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Invoice Register{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h4>Invoice Register</h4>
+  <a href="{{ url_for('reports.invoice_register_export') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-file-excel"></i> Export Excel</a>
+</div>
+<div class="card"><div class="card-body p-0">
+<table class="table table-hover mb-0">
+<thead><tr><th>Shipment</th><th>Type</th><th>Vendor</th><th>Invoice No</th><th>Amount</th><th>Classification</th><th>Status</th></tr></thead>
+<tbody>
+{% for i in invoices %}
+<tr>
+<td><a href="{{ url_for('shipments.view_shipment', shipment_id=i.shipment_id) }}">{{ i.shipment.file_number }}</a></td>
+<td>{{ i.invoice_type }}</td><td>{{ i.vendor_name or '-' }}</td><td>{{ i.invoice_number or '-' }}</td>
+<td>{{ i.invoice_amount | inr }}</td><td>{{ i.classification or '-' }}</td><td>{{ i.status }}</td>
+</tr>
+{% else %}
+<tr><td colspan="7" class="text-muted text-center py-3">No data.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div></div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Shipment {{ shipment.file_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Shipment: {{ shipment.file_number }}</h4>
+  <div>
+    {% if current_user.has_role('Administrator', 'Accounts Officer', 'Bond Superintendent') %}
+    <a href="{{ url_for('shipments.edit_shipment', shipment_id=shipment.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit</a>
+    <a href="{{ url_for('invoices.new_invoice', shipment_id=shipment.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg"></i> Add Invoice</a>
+    <form method="POST" action="{{ url_for('approval_note.generate', shipment_id=shipment.id) }}" class="d-inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-file-earmark-text"></i> Generate Approval Note</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="card"><div class="card-body">
+    <div class="text-muted small">GRN</div><div class="fw-semibold">{{ shipment.grn_number or '-' }}</div>
+  </div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body">
+    <div class="text-muted small">BOE</div><div class="fw-semibold">{{ shipment.boe_number or '-' }}</div>
+  </div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body">
+    <div class="text-muted small">CHA</div><div class="fw-semibold">{{ shipment.cha_name }}</div>
+  </div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body">
+    <div class="text-muted small">Total Amount</div><div class="fw-semibold">{{ shipment.total_amount() | inr }}</div>
+  </div></div></div>
+</div>
+
+<div class="card mb-4"><div class="card-body">
+  <h6>Invoices</h6>
+  <table class="table table-sm table-hover">
+    <thead><tr>
+      <th>Type</th><th>Vendor</th><th>Invoice No</th><th>Amount</th><th>Classification</th><th>Status</th><th></th>
+    </tr></thead>
+    <tbody>
+    {% for inv in invoices %}
+      <tr>
+        <td>{{ inv.invoice_type }}</td>
+        <td>{{ inv.vendor_name or '-' }}</td>
+        <td>{{ inv.invoice_number or '-' }}</td>
+        <td>{{ inv.invoice_amount | inr }}</td>
+        <td>
+          {% if inv.classification == 'Recoverable' %}
+            <span class="badge bg-warning text-dark">Recoverable{% if inv.recover_from_party %} - {{ inv.recover_from_party }}{% endif %}</span>
+          {% elif inv.classification == 'Company Borne' %}
+            <span class="badge bg-secondary">Company Borne{% if inv.company_borne_reason %} - {{ inv.company_borne_reason }}{% endif %}</span>
+          {% else %}
+            <span class="text-muted">Unclassified</span>
+          {% endif %}
+        </td>
+        <td><span class="badge bg-info text-dark">{{ inv.status }}</span></td>
+        <td>
+          <a href="{{ url_for('invoices.edit_invoice', invoice_id=inv.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-muted text-center py-3">No invoices yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+
+<div class="card"><div class="card-body">
+  <h6>Approval Notes</h6>
+  <table class="table table-sm">
+    <thead><tr><th>Document Number</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr></thead>
+    <tbody>
+    {% for n in notes %}
+      <tr>
+        <td>{{ n.document_number }}</td>
+        <td>{{ n.document_date }}</td>
+        <td><span class="badge bg-primary">{{ n.status }}</span></td>
+        <td>{{ n.total_amount | inr }}</td>
+        <td><a href="{{ url_for('approval_note.view_note', note_id=n.id) }}" class="btn btn-sm btn-outline-primary">Open</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-3">No approval notes generated yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}
